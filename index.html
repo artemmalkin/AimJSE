@@ -1,0 +1,40 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Clash of the Dinos</title>
+    <meta name="viewport" content="width=device-width, user-scalable=no">
+    <link rel="stylesheet" href="css/main.css">
+    <!-- Yandex Games SDK -->
+    <script src="https://yandex.ru/games/sdk/v2"></script>
+    <script type="text/javascript">
+        YaGames
+            .init()
+            .then(ysdk => {
+                console.log('Yandex SDK initialized');
+                window.ysdk = ysdk;
+            });
+        YaGames.init().then(ysdk => ysdk.adv.showFullscreenAdv())
+    </script>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    <script src="eng.js"></script>
+       <!-- <script>
+            window.addEventListener('resize', resizeCanvas);
+            resizeCanvas();
+
+            function resizeCanvas() {
+                canvas.width = 1920;
+                canvas.height = 1080;
+
+                canvasUI.width = canvas.width;
+                canvasUI.height = canvas.height;
+                UIController.drawUI();
+                mouse.offset = {
+                    "x": (window.innerWidth - canvas.offsetWidth) / 2,
+                    "y": (window.innerHeight - canvas.offsetHeight) / 2
+                }
+            }
+        </script>-->
+</body>
+</html>
