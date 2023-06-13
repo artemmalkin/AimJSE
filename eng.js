@@ -1,6 +1,5 @@
 let config = {
-    modulePath: './modules/',
-    dataPath: '',
+    assetsPath: 'assets',
     canvas: {
         id: 'canvas',
         width: 1920,
@@ -13,6 +12,8 @@ let config = {
 
         update: () => {
             canvas.ctx.clearRect(0, 0, config.canvas.width, config.canvas.height);
+            canvas.ctx.fillStyle = "blue";
+            canvas.ctx.fillRect(0, 0, canvas.canvas.width, canvas.canvas.height);
 
             updateFunc();
 
@@ -30,6 +31,10 @@ let config = {
     onResize: () => {
         canvas.setSize(config.canvas.width, config.canvas.height);
     },
+    preload: {
+        images: ['./assets/images/player.png'],
+        scripts: ['./modules/2d/animationSprite.js', './modules/2d/animationSpriteProperty.js'],
+    }
 }
 
 let updateFunc = () => { };
@@ -52,7 +57,7 @@ const Load = {
                     }
                     script.onerror = () => rej(path);
                     script.type = 'text/javascript';
-                    script.src = config.modulePath + path;
+                    script.src = path;
 
                     document.head.appendChild(script);
                 });
@@ -76,7 +81,7 @@ const Load = {
                         let id = path.split('/');
 
                         if (id[0] == '.') id = id.splice(1, id.length - 1);
-                        if (id[0] == config.dataPath) id = id.splice(1, id.length - 1);
+                        if (id[0] == config.assetsPath) id = id.splice(1, id.length - 1);
 
                         for (const ext of ['png', 'jpeg', 'jpg', 'gif'])
                             id[id.length - 1] = id[id.length - 1].replace(`.${ext}`, '');
@@ -91,7 +96,7 @@ const Load = {
 
                 });
 
-                totatFiles++;
+                totalFiles++;
                 await promise;
             }
         }
@@ -102,21 +107,50 @@ const Load = {
 }
 
 let canvas;
-Load.script('canvas/camera.js', 'canvas/canvas.js').then(() => {
+let mouse;
+let rectangle;
+Load.script('./modules/canvas/camera.js', './modules/canvas/canvas.js', './modules/input/mouse.js', './modules/2d/sprite.js', './modules/2d/rectangle.js').then(() => {
     canvas = new Canvas(document.getElementById(config.canvas.id));
     config.onResize();
     window.addEventListener('resize', config.onResize);
-})
 
-let rectangle;
-Load.script('2d/sprite.js', '2d/rectangle.js').then(() => {
+    mouse = new Mouse();
+
     rectangle = new Rectangle(canvas, 0, 20, "red", 0, "", 0, 540)
     updateFunc = () => {
         rectangle.draw();
     }
     fixedUpdateFunc = () => {
         rectangle.width = (loadedFiles / totalFiles) * config.canvas.width;
-        
+        if (loadedFiles === totalFiles) {
+            fixedUpdateFunc = () => { };
+            console.log("Loading Done!")
+            YaGames
+                .init()
+                .then(ysdk => {
+                    ysdk.features.LoadingAPI?.ready();
+                })
+                .catch(console.error);
+            // start the game
+            loadScene()
+        }
+    }
+    for (const path of config.preload.images) {
+        Load.image(path)
+    }
+    for (const path of config.preload.scripts) {
+        Load.script(path)
     }
     config.canvas.update();
 })
+
+let loadScene = () => {
+    let sprite = new Sprite(images['images.player'], 64, 64, 0, 0, canvas, 5, 0, 0)
+    //let animationProp = new AnimationSpriteProperty(sprite, 9, 200)
+    //animationProp.propertyAnimation.scale = [6, 7, 8, 9, 10, 9, 8, 7, 6]
+    //animationProp.propertyAnimation.y = [0, -100, -200, -300,-400, -300, -200, -100, 0, ]
+    let animation = new AnimationSpriteSheet(sprite, 3, 200)
+    updateFunc = () => {
+        animation.draw();
+    }
+}

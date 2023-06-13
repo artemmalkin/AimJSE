@@ -20,16 +20,23 @@ class Sprite {
             this.sy = frameRow * this.frameHeight;
         };
 
+        this.scale = scale;
         this.scaledWidth;
         this.scaledHeight;
-        this.setScale = (scale) => {
+        this._setScale = (scale) => {
+            this.scale = scale;
             this.scaledWidth = this.frameWidth * scale;
             this.scaledHeight = this.frameHeight * scale;
         };
-
+        this._setWidth = (width) => {
+            this.scaledWidth = width * this.scale;
+        }
+        this._setHeight = (height) => {
+            this.scaledHeight = height * this.scale;
+        }
         this.setFrameCol(frameCol);
         this.setFrameRow(frameRow);
-        this.setScale(scale);
+        this._setScale(scale);
     }
 
     draw() {
