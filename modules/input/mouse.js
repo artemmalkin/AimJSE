@@ -13,33 +13,13 @@ class Mouse {
             event.preventDefault();
         });
 
-        canvas.canvas.addEventListener("touchstart", this.touchStart);
+        canvas.canvas.addEventListener("pointerdown", this.mouseDown);
 
-        canvas.canvas.addEventListener("touchmove", this.touchMove);
+        canvas.canvas.addEventListener("pointermove", this.mouseMove);
 
-        document.addEventListener("touchend", this.touchEnd);
-
-        canvas.canvas.addEventListener("mousedown", this.mouseDown);
-
-        canvas.canvas.addEventListener("mousemove", this.mouseMove);
-
-        document.addEventListener("mouseup", this.mouseUp);
+        document.addEventListener("pointerup", this.mouseUp);
 
         document.addEventListener("wheel", this.mouseWheel);
-    }
-
-    touchStart(event) {
-        console.log("TouchStart")
-        console.log(event)
-    }
-
-    touchMove(event) {
-        console.log("TouchMove")
-        console.log(event)
-    }
-    touchEnd(event) {
-        console.log("TouchEnd")
-        console.log(event)
     }
 
     mouseDown(event) {
@@ -49,7 +29,9 @@ class Mouse {
         mouse.position.x = Math.floor(event.offsetX / canvas.canvas.offsetWidth * canvas.canvas.width);
         mouse.position.y = Math.floor(event.offsetY / canvas.canvas.offsetHeight * canvas.canvas.height);
         mouse.isDown = true;
+
         mouse.onMouseDown();
+        gui.handleMouseDown();
     }
 
     mouseMove(event) {
@@ -68,6 +50,7 @@ class Mouse {
             mouse.pastPosition.timeStamp = mouse.position.timeStamp;
 
             mouse.onMouseDrag();
+            gui.handleMouseDrag();
         }
     }
 
@@ -75,10 +58,13 @@ class Mouse {
         mouse.position.x = Math.floor(event.offsetX / canvas.canvas.offsetWidth * canvas.canvas.width);
         mouse.position.y = Math.floor(event.offsetY / canvas.canvas.offsetHeight * canvas.canvas.height);
         mouse.isDown = false;
+
         mouse.onMouseUp();
+        gui.handleMouseUp();
     }
 
     mouseWheel(event) {
         mouse.onMouseWheel(event.wheelDelta)
+        gui.handleMouseWheel(event.wheelDelta);
     }
 }

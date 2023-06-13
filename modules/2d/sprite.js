@@ -1,8 +1,6 @@
 class Sprite {
-    constructor(image, frameWidth, frameHeight, x = 0, y = 0, canvas, scale = 1, frameCol = 0, frameRow = 0) {
+    constructor(image, frameWidth, frameHeight, x = 0, y = 0, scale = 1, frameCol = 0, frameRow = 0) {
         this.image = image;
-        this.canvas = canvas;
-        this.camera = canvas.camera;
 
         this.x = x;
         this.y = y;
@@ -40,8 +38,8 @@ class Sprite {
     }
 
     draw() {
-        this.canvas.ctx.imageSmoothingEnabled = false;
-        this.canvas.ctx.drawImage(this.image, this.sx, this.sy, this.frameWidth, this.frameHeight, this.x - this.camera.position.x, this.y - this.camera.position.y, this.scaledWidth * this.camera.zoom, this.scaledHeight * this.camera.zoom);
+        canvas.ctx.imageSmoothingEnabled = false;
+        canvas.ctx.drawImage(this.image, this.sx, this.sy, this.frameWidth, this.frameHeight, this.x - canvas.camera.position.x, this.y - canvas.camera.position.y, this.scaledWidth * canvas.camera.zoom, this.scaledHeight * canvas.camera.zoom);
     }
 
     drawPattern(repeatCount = 0, repeatAxis = "x") {

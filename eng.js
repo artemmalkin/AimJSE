@@ -23,6 +23,8 @@ let config = {
                 fixedUpdateFunc();
             }
 
+            gui.draw();
+
             if (config.canvas.status === 1) {
                 window.requestAnimationFrame(config.canvas.update);
             }
@@ -108,20 +110,24 @@ const Load = {
 
 let canvas;
 let mouse;
-let rectangle;
-Load.script('./modules/canvas/camera.js', './modules/canvas/canvas.js', './modules/input/mouse.js', './modules/2d/sprite.js', './modules/2d/rectangle.js').then(() => {
+let keyboard;
+let gui;
+let loadingLine;
+Load.script('./modules/canvas/camera.js', './modules/canvas/canvas.js', './modules/input/mouse.js', './modules/input/keyboard.js', './modules/gui/gui.js', './modules/gui/text.js', './modules/gui/button.js', './modules/2d/sprite.js', './modules/2d/rectangle.js').then(() => {
     canvas = new Canvas(document.getElementById(config.canvas.id));
     config.onResize();
     window.addEventListener('resize', config.onResize);
 
     mouse = new Mouse();
+    keyboard = new Keyboard();
+    gui = new GUI();
 
-    rectangle = new Rectangle(canvas, 0, 20, "red", 0, "", 0, 540)
+    loadingLine = new Rectangle(canvas, 0, 20, "red", 0, "", 0, 540)
     updateFunc = () => {
-        rectangle.draw();
+        loadingLine.draw();
     }
     fixedUpdateFunc = () => {
-        rectangle.width = (loadedFiles / totalFiles) * config.canvas.width;
+        loadingLine.width = (loadedFiles / totalFiles) * config.canvas.width;
         if (loadedFiles === totalFiles) {
             fixedUpdateFunc = () => { };
             console.log("Loading Done!")
@@ -145,11 +151,14 @@ Load.script('./modules/canvas/camera.js', './modules/canvas/canvas.js', './modul
 })
 
 let loadScene = () => {
-    let sprite = new Sprite(images['images.player'], 64, 64, 0, 0, canvas, 5, 0, 0)
+    let sprite = new Sprite(images['images.player'], 64, 64, 0, 0, 5, 0, 0)
     //let animationProp = new AnimationSpriteProperty(sprite, 9, 200)
     //animationProp.propertyAnimation.scale = [6, 7, 8, 9, 10, 9, 8, 7, 6]
     //animationProp.propertyAnimation.y = [0, -100, -200, -300,-400, -300, -200, -100, 0, ]
     let animation = new AnimationSpriteSheet(sprite, 3, 200)
+    let testText = new _Text(0, 60, "Hello World", "serif", 40, "red", "white", 2)
+    let testButton = new Button(0, 60, 100, 100, new Sprite(images['images.player'], 64, 64, -50, -100, 5, 0, 0), testText, () => {console.log("button clicked!")})
+    gui.elements = [testButton]
     updateFunc = () => {
         animation.draw();
     }
