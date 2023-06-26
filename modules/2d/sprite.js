@@ -11,6 +11,9 @@ class Sprite {
         this.frameWidth = frameWidth;
         this.frameHeight = frameHeight;
 
+        this.centerWidth = frameWidth / 2;
+        this.centerHeight = frameHeight / 2;
+
         this.setFrameCol = (frameCol) => {
             this.sx = frameCol * this.frameWidth;
         };
@@ -25,6 +28,8 @@ class Sprite {
             this.scale = scale;
             this.scaledWidth = this.frameWidth * scale;
             this.scaledHeight = this.frameHeight * scale;
+            this.centerWidth = this.scaledWidth / 2;
+            this.centerHeight = this.scaledHeight / 2;
         };
         this._setWidth = (width) => {
             this.scaledWidth = width * this.scale;
@@ -37,12 +42,17 @@ class Sprite {
         this._setScale(scale);
     }
 
-    draw() {
+    drawRelativeCanvas() {
         canvas.ctx.imageSmoothingEnabled = false;
-        canvas.ctx.drawImage(this.image, this.sx, this.sy, this.frameWidth, this.frameHeight, this.x - canvas.camera.position.x, this.y - canvas.camera.position.y, this.scaledWidth * canvas.camera.zoom, this.scaledHeight * canvas.camera.zoom);
+        canvas.ctx.drawImage(this.image, this.sx, this.sy, this.frameWidth, this.frameHeight, (this.x - this.centerWidth), (this.y - this.centerHeight), this.scaledWidth, this.scaledHeight);
     }
 
-    drawPattern(repeatCount = 0, repeatAxis = "x") {
+    drawRelativeWorld() {
+        canvas.ctx.imageSmoothingEnabled = false;
+        canvas.ctx.drawImage(this.image, this.sx, this.sy, this.frameWidth, this.frameHeight, (this.x - this.centerWidth) * canvas.camera.zoom - canvas.camera.position.x, (this.y - this.centerHeight) * canvas.camera.zoom - canvas.camera.position.y, this.scaledWidth * canvas.camera.zoom, this.scaledHeight * canvas.camera.zoom);
+    }
+
+    drawPatternRelativeCanvas(repeatCount = 0, repeatAxis = "x") {
         const x = this.x;
         const y = this.y;
 
@@ -55,6 +65,26 @@ class Sprite {
             for (let n = 1; n < repeatCount; n++) {
                 this.y = n * y;
                 this.draw();
+            }
+        };
+
+        this.x = x;
+        this.y = y;
+    }
+
+    drawPatternRelativeWorld(repeatCount = 0, repeatAxis = "x") {
+        const x = this.x;
+        const y = this.y;
+
+        if (repeatAxis === "x") {
+            for (let n = 0; n < repeatCount; n++) {
+                this.x = n * x;
+                this.drawRelativeCamera();
+            }
+        } else {
+            for (let n = 1; n < repeatCount; n++) {
+                this.y = n * y;
+                this.drawRelativeCamera();
             }
         };
 

@@ -1,41 +1,33 @@
-class GUI {
-    constructor() {
-        this.elements = [];
+const gui = new Module('GUI');
 
-        this.onMouseDown = () => { handleMouseDown() };
-        this.onMouseUp = () => { handleMouseUp() };
-        this.onMouseDrag = () => { handleMouseDrag() };
-        this.onMouseWheel = (wheelDelta) => { handleMouseWheel(wheelDelta) };
-    }
+gui.elements = [];
 
-    handleMouseDown() {
+gui.onMouseDown = () => { gui.handleMouseDown() };
+gui.onMouseUp = () => { gui.handleMouseUp() };
+gui.onMouseDrag = () => { gui.handleMouseDrag() };
+gui.onMouseWheel = (wheelDelta) => { gui.handleMouseWheel(wheelDelta) };
 
-    }
+gui.handleMouseDown = () => {
+}
+gui.handleMouseUp = () => {
+    gui.elements.forEach((element) => {
+        switch (element.constructor) {
+            case Button:
+                if (element.x < mouse.position.x && mouse.position.x < element.x + element.width &&
+                    element.y < mouse.position.y && mouse.position.y < element.y + element.height) {
+                    element.action?.();
+                }
+                break
+            default:
+                break
+        }
+    });
+}
+gui.handleMouseDrag = () => {
+}
+gui.handleMouseWheel = (wheelDelta) => {
+}
 
-    handleMouseUp() {
-        this.elements.forEach((element) => {
-            switch (element.constructor) {
-                case Button:
-                    if (element.x < mouse.position.x && mouse.position.x < element.x + element.width &&
-                        element.y < mouse.position.y && mouse.position.y < element.y + element.height) {
-                        element.action?.();
-                    }
-                    break
-                default:
-                    break
-            }
-        });
-    }
-
-    handleMouseDrag() {
-
-    }
-
-    handleMouseWheel(wheelDelta) {
-
-    }
-
-    draw() {
-        this.elements.forEach((element) => element.draw());
-    }
+gui.draw = () => {
+    gui.elements.forEach((element) => element.drawRelativeCanvas());
 }

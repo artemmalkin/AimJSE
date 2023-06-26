@@ -1,22 +1,30 @@
-class Canvas {
-    constructor(canvas, camera = new Camera()) {
-        this.canvas = canvas;
-        this.ctx = this.canvas.getContext('2d');
+const canvas = new Module('canvas');
 
-        this.camera = camera;
+canvas.htmlElement = document.getElementById(config.canvas.id);
+canvas.ctx = canvas.htmlElement.getContext('2d');
 
-        this.timeScale = 1;
-    }
-    setSize(width, height) {
-        this.canvas.width = width;
-        this.canvas.height = height;
-    }
+canvas.timeScale = 1;
 
-    pause() {
-        this.timeScale = 0;
-    }
+canvas.worldObjects = [];
 
-    continue() {
-        this.timeScale = 1;
-    }
+canvas.onResize = () => {
+    canvas.setSize(config.canvas.width(), config.canvas.height());
+    grid.recalculatePositionRelativeCanvasForAllObjects();
+};
+
+onresize = canvas.onResize;
+
+canvas.setSize = (width, height) => {
+    canvas.htmlElement.width = width;
+    canvas.htmlElement.height = height;
 }
+
+canvas.pause = () => {
+    canvas.timeScale = 0;
+}
+
+canvas.pause = () => {
+    canvas.timeScale = 1;
+}
+
+canvas.onResize();
